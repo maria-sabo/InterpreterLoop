@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ilist.h"
-// changes for utf8
+// изменения
 #define BSS 1000 // ìàñêèìàëüíàÿ äëèíà ñòðîêè ïðîãðàììû
 #define BSC 100 // ìàêñèìàëüíàÿ äëèíà êîìàíäû 
 
