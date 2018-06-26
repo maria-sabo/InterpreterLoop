@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ilist.h"
-
-#define BSS 1000 // маскимальная длина строки программы
-#define BSC 100 // максимальная длина команды 
+// changes for utf8
+#define BSS 1000 // Г¬Г Г±ГЄГЁГ¬Г Г«ГјГ­Г Гї Г¤Г«ГЁГ­Г  Г±ГІГ°Г®ГЄГЁ ГЇГ°Г®ГЈГ°Г Г¬Г¬Г»
+#define BSC 100 // Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г Гї Г¤Г«ГЁГ­Г  ГЄГ®Г¬Г Г­Г¤Г» 
 
 int load_prog(char *, DblLinkedList * ); 
 int load_var(char *, DblLinkedList * );
 
-// разбиваем программу через ; так чтобы было через \n в list_prog 
+// Г°Г Г§ГЎГЁГўГ ГҐГ¬ ГЇГ°Г®ГЈГ°Г Г¬Г¬Гі Г·ГҐГ°ГҐГ§ ; ГІГ ГЄ Г·ГІГ®ГЎГ» ГЎГ»Г«Г® Г·ГҐГ°ГҐГ§ \n Гў list_prog 
 int load_prog(char *progName, DblLinkedList * list_prog) {
 
 	FILE *file_prog;
@@ -36,9 +36,9 @@ int load_prog(char *progName, DblLinkedList * list_prog) {
 		while ((ch = fgetc(file_prog)) != EOF) {
 			if (!(ch == ' ' || ch == '\n' || ch == '\t')) {
 				if (ch == ';') {
-					buffer1[i] = '\0'; // строка кончилась 
+					buffer1[i] = '\0'; // Г±ГІГ°Г®ГЄГ  ГЄГ®Г­Г·ГЁГ«Г Г±Гј 
 					int ex = 1;
-					// несколько LOOP DO подряд
+					// Г­ГҐГ±ГЄГ®Г«ГјГЄГ® LOOP DO ГЇГ®Г¤Г°ГїГ¤
 					while (ex) {
 						yk = strstr(buffer1, "DO");
 						if (yk == NULL) {
@@ -112,7 +112,7 @@ int load_prog(char *progName, DblLinkedList * list_prog) {
 
 		fclose(file_prog);
 		system("cls");
-		// печатаем список команд 
+		// ГЇГҐГ·Г ГІГ ГҐГ¬ Г±ГЇГЁГ±Г®ГЄ ГЄГ®Г¬Г Г­Г¤ 
 		printDblLinkedList(list_prog, printString);
 		system("pause");
 		return 1;
@@ -124,7 +124,7 @@ int load_prog(char *progName, DblLinkedList * list_prog) {
 	system("pause");
 	return 0;
 }
-// разбиваем программу через ; и , так чтобы было \n в list_var
+// Г°Г Г§ГЎГЁГўГ ГҐГ¬ ГЇГ°Г®ГЈГ°Г Г¬Г¬Гі Г·ГҐГ°ГҐГ§ ; ГЁ , ГІГ ГЄ Г·ГІГ®ГЎГ» ГЎГ»Г«Г® \n Гў list_var
 int load_var(char *varName, DblLinkedList * list_var) {
 
 	FILE *file_var;
@@ -180,7 +180,7 @@ int load_var(char *varName, DblLinkedList * list_var) {
 
 		fclose(file_var);
 		system("cls");
-		// печатаем список переменных 
+		// ГЇГҐГ·Г ГІГ ГҐГ¬ Г±ГЇГЁГ±Г®ГЄ ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»Гµ 
 		printDblLinkedList(list_var, printString);
 		system("pause");
 		return 1;
