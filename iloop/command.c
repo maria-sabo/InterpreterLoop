@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ilist.h"
 #include "command.h"
-#define BSE 100 // ìàêñèìàëüíàÿ äëèíà ñîîáùåíèÿ îá îøèáêå
+#define BSE 100 // Ã¬Ã ÃªÃ±Ã¨Ã¬Ã Ã«Ã¼Ã­Ã Ã¿ Ã¤Ã«Ã¨Ã­Ã  Ã±Ã®Ã®Ã¡Ã¹Ã¥Ã­Ã¨Ã¿ Ã®Ã¡ Ã®Ã¸Ã¨Ã¡ÃªÃ¥
 
 
 void doProg(FILE *f, DblLinkedList * list_command, DblLinkedList * list_init, int comlimit) {
@@ -9,22 +9,22 @@ void doProg(FILE *f, DblLinkedList * list_command, DblLinkedList * list_init, in
 	DblLinkedList * list_varvalue = createDblLinkedList();
 	DblLinkedList * list_loop = createDblLinkedList();
 
-	Node *tmp = list_init->head; // âñòàåì â íà÷àëî ñïèñêà êîìàíä äëÿ èíèöèàëèçàöèè ïåðåìåííûõ
+	Node *tmp = list_init->head; // Ã¢Ã±Ã²Ã Ã¥Ã¬ Ã¢ Ã­Ã Ã·Ã Ã«Ã® Ã±Ã¯Ã¨Ã±ÃªÃ  ÃªÃ®Ã¬Ã Ã­Ã¤ Ã¤Ã«Ã¿ Ã¨Ã­Ã¨Ã¶Ã¨Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¨ Ã¯Ã¥Ã°Ã¥Ã¬Ã¥Ã­Ã­Ã»Ãµ
 	int ok = 1;
 	system("cls");
 	while (tmp && ok) {
-		ok = doCommand((Command *)tmp->value, list_loop, list_varvalue, &tmp); // âûïîëíÿåì ïîî÷åðåäè êîìàíäû èíèöèàëèçàöèè ïåðåìåííûõ
-		printCommand(tmp->value, f); // ïå÷àòü êîìàíäû
-		printVarLoop(f, list_loop, list_varvalue); // ïå÷àòü ñïèñêà list_varvalue è list_loop
+		ok = doCommand((Command *)tmp->value, list_loop, list_varvalue, &tmp); // Ã¢Ã»Ã¯Ã®Ã«Ã­Ã¿Ã¥Ã¬ Ã¯Ã®Ã®Ã·Ã¥Ã°Ã¥Ã¤Ã¨ ÃªÃ®Ã¬Ã Ã­Ã¤Ã» Ã¨Ã­Ã¨Ã¶Ã¨Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¨ Ã¯Ã¥Ã°Ã¥Ã¬Ã¥Ã­Ã­Ã»Ãµ
+		printCommand(tmp->value, f); // Ã¯Ã¥Ã·Ã Ã²Ã¼ ÃªÃ®Ã¬Ã Ã­Ã¤Ã»
+		printVarLoop(f, list_loop, list_varvalue); // Ã¯Ã¥Ã·Ã Ã²Ã¼ Ã±Ã¯Ã¨Ã±ÃªÃ  list_varvalue Ã¨ list_loop
 		tmp = tmp->next;
 	}
 	if (!ok) printf("Variable initialisation error\n");
 
-	tmp = list_command->head; // âñòàåì â íà÷àëî ñïèñêà êîìàíä
+	tmp = list_command->head; // Ã¢Ã±Ã²Ã Ã¥Ã¬ Ã¢ Ã­Ã Ã·Ã Ã«Ã® Ã±Ã¯Ã¨Ã±ÃªÃ  ÃªÃ®Ã¬Ã Ã­Ã¤
 	ok = 1;
 	int cnt_temp = 0;
 	int cnt_all = 0;
-	int decision = 0; // ðåøåíèå ïðîäîëæèòü ëè ðàáîòó ïðîãðàììû
+	int decision = 0; // Ã°Ã¥Ã¸Ã¥Ã­Ã¨Ã¥ Ã¯Ã°Ã®Ã¤Ã®Ã«Ã¦Ã¨Ã²Ã¼ Ã«Ã¨ Ã°Ã Ã¡Ã®Ã²Ã³ Ã¯Ã°Ã®Ã£Ã°Ã Ã¬Ã¬Ã»
 	while ((tmp && ok) && (decision == 0)) {
 		ok = doCommand((Command *)tmp->value, list_loop, list_varvalue, &tmp);
 		if (ok != -1) {
@@ -55,7 +55,7 @@ void doProg(FILE *f, DblLinkedList * list_command, DblLinkedList * list_init, in
 		fprintf(f,"x0 is not initialised\n");
 	}
 
-	VarEl *buf1;                       // óäàëÿåì, îñâîáîæäàÿ ïàìÿòü
+	VarEl *buf1;                       // Ã³Ã¤Ã Ã«Ã¿Ã¥Ã¬, Ã®Ã±Ã¢Ã®Ã¡Ã®Ã¦Ã¤Ã Ã¿ Ã¯Ã Ã¬Ã¿Ã²Ã¼
 	buf1 = (VarEl *) popFront(list_varvalue);
 	while (buf1 != NULL) {
 		buf1 = (VarEl *) popFront(list_varvalue);
@@ -76,7 +76,7 @@ void doProg(FILE *f, DblLinkedList * list_command, DblLinkedList * list_init, in
 int doCommand(void * value, DblLinkedList * list_loop, DblLinkedList * list_varvalue, Node** tp) {
 	Command * com;
 	com = (Command *)value;
-	if (!checkloop(list_loop) && com->command != 2) // âûõîä, åñëè ïîñëåäíèé loop íóëåâîé è íå END
+	if (!checkloop(list_loop) && com->command != 2) // Ã¢Ã»ÃµÃ®Ã¤, Ã¥Ã±Ã«Ã¨ Ã¯Ã®Ã±Ã«Ã¥Ã¤Ã­Ã¨Ã© loop Ã­Ã³Ã«Ã¥Ã¢Ã®Ã© Ã¨ Ã­Ã¥ END
 		return -1;
 	int ok = 1;
 	int val;
@@ -127,7 +127,7 @@ int doCommand(void * value, DblLinkedList * list_loop, DblLinkedList * list_varv
 	}
 	return ok;
 }
-// ïå÷àòü êîìàíäû â ñîîòâåòñòâèè ñ ðàçáîðîì îøèáîê
+// Ã¯Ã¥Ã·Ã Ã²Ã¼ ÃªÃ®Ã¬Ã Ã­Ã¤Ã» Ã¢ Ã±Ã®Ã®Ã²Ã¢Ã¥Ã²Ã±Ã²Ã¢Ã¨Ã¨ Ã± Ã°Ã Ã§Ã¡Ã®Ã°Ã®Ã¬ Ã®Ã¸Ã¨Ã¡Ã®Ãª 
  void printCommand(void * value, FILE *f) {
 	char * er = (char *)malloc(BSE * sizeof(char));
 	Command * com;
@@ -143,7 +143,7 @@ int doCommand(void * value, DblLinkedList * list_loop, DblLinkedList * list_varv
 	if (com->error == 7) strcpy(er, "  Garbage characters in the index of left part");
 	if (com->error == 8) strcpy(er, "  Plus or minus are not found");
 	if (com->error == 9) strcpy(er, "  There is unrecognised command");
-	if (com->error == 10) strcpy(er, "  Garbage characters in the use of õ");
+	if (com->error == 10) strcpy(er, "  Garbage characters in the use of Ãµ");
 	if (com->error == 11) strcpy(er, "  Garbage characters in the index of x");
 	if (com->error == 12) strcpy(er, "  Garbage characters in the right part of = ");
 	if (com->error == 13) strcpy(er, "  There is unrecognised command");
