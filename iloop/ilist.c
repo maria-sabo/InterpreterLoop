@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "ilist.h"
-// ðåàëèçàöèÿ äâóñâÿçíîãî ñïèñêà âçÿòà èç èíòåðíåòà
+// Ã°Ã¥Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¿ Ã¤Ã¢Ã³Ã±Ã¢Ã¿Ã§Ã­Ã®Ã£Ã® Ã±Ã¯Ã¨Ã±ÃªÃ  Ã¢Ã§Ã¿Ã²Ã  Ã¨Ã§ Ã¨Ã­Ã²Ã¥Ã°Ã­Ã¥Ã²Ã 
 
-// ñîçäàíèå ñïèñêà
+// ÑÐ¾Ð·Ð´Ð°ÐµÐ¼ ÑÐ¿Ð¸ÑÐ¾Ðº
 DblLinkedList* createDblLinkedList() {
 	DblLinkedList *tmp = (DblLinkedList*)malloc(sizeof(DblLinkedList));
 	tmp->size = 0;
@@ -10,7 +10,7 @@ DblLinkedList* createDblLinkedList() {
 	return tmp;
 }
 
-// óäàëåíèå ñïèñêà
+// Ã³Ã¤Ã Ã«Ã¥Ã­Ã¨Ã¥ Ã±Ã¯Ã¨Ã±ÃªÃ 
 void deleteDblLinkedList(DblLinkedList **list) {
 	Node *tmp = (*list)->head;
 	Node *next = NULL;
@@ -23,7 +23,7 @@ void deleteDblLinkedList(DblLinkedList **list) {
 	(*list) = NULL;
 }
 
-// âñòàâêà âïåðåä
+// Ã¢Ã±Ã²Ã Ã¢ÃªÃ  Ã¢Ã¯Ã¥Ã°Ã¥Ã¤
 void pushFront(DblLinkedList *list, void *data) {
 	Node *tmp = (Node*)malloc(sizeof(Node));
 	if (tmp == NULL) {
@@ -43,7 +43,7 @@ void pushFront(DblLinkedList *list, void *data) {
 	list->size++;
 }
 
-// óäàëåíèå ïåðâîãî
+// Ã³Ã¤Ã Ã«Ã¥Ã­Ã¨Ã¥ Ã¯Ã¥Ã°Ã¢Ã®Ã£Ã®
 void* popFront(DblLinkedList *list) {
 	Node *prev;
 	void *tmp;
@@ -66,7 +66,7 @@ void* popFront(DblLinkedList *list) {
 	return tmp;
 }
 
-// âñòàâêà â êîíåö
+// Ã¢Ã±Ã²Ã Ã¢ÃªÃ  Ã¢ ÃªÃ®Ã­Ã¥Ã¶
 void pushBack(DblLinkedList *list, void *value) {
 	Node *tmp = (Node*)malloc(sizeof(Node));
 	if (tmp == NULL) {
@@ -86,7 +86,7 @@ void pushBack(DblLinkedList *list, void *value) {
 	list->size++;
 }
 
-// óäåëåíèå èç êîíöà
+// Ã³Ã¤Ã¥Ã«Ã¥Ã­Ã¨Ã¥ Ã¨Ã§ ÃªÃ®Ã­Ã¶Ã 
 void* popBack(DblLinkedList *list) {
 	Node *next;
 	void *tmp;
@@ -110,7 +110,7 @@ void* popBack(DblLinkedList *list) {
 }
 
 
-// óêàçàòåëü íà i ýëåìåíò
+// Ã³ÃªÃ Ã§Ã Ã²Ã¥Ã«Ã¼ Ã­Ã  i Ã½Ã«Ã¥Ã¬Ã¥Ã­Ã²
 Node* getNth(DblLinkedList *list, size_t index) {
 	Node *tmp = list->head;
 	size_t i = 0;
@@ -123,7 +123,7 @@ Node* getNth(DblLinkedList *list, size_t index) {
 	return tmp;
 }
 
-// ïå÷àòü ñïèñêà
+// Ã¯Ã¥Ã·Ã Ã²Ã¼ Ã±Ã¯Ã¨Ã±ÃªÃ 
 void printDblLinkedList(DblLinkedList *list, void(*fun)(void*)) {
 	Node *tmp = list->head;
 	while (tmp) {
