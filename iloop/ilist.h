@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <malloc.h>
-
+#pragma once
+#ifndef ILIST_H
+#define ILIST_H
 // узел
 typedef struct _Node {
 	void *value;
@@ -14,6 +16,7 @@ typedef struct _DblLinkedList {
 	Node *head;
 	Node *tail;
 } DblLinkedList;
+#endif ILIST_H
 
 DblLinkedList* createDblLinkedList();
 void deleteDblLinkedList(DblLinkedList **list);
@@ -22,6 +25,8 @@ void* popFront(DblLinkedList *list);
 void pushBack(DblLinkedList *list, void *value);
 void* popBack(DblLinkedList *list);
 Node* getNth(DblLinkedList *list, size_t index);
-void printDblLinkedList(DblLinkedList *list, void(*fun)(void*));
-void printInt(void *value);
-void printString(void *value);
+void printDblLinkedList(DblLinkedList *list);
+int checkMemory(void *buffer);
+
+
+

@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "ilist.h"
+
 // реализация двусвязного списка взята из интернета
 
 // создание списка
 DblLinkedList* createDblLinkedList() {
-	DblLinkedList *tmp = (DblLinkedList*)malloc(sizeof(DblLinkedList));
+	DblLinkedList *tmp;
+	tmp = (DblLinkedList*)malloc(sizeof(DblLinkedList));
 	tmp->size = 0;
 	tmp->head = tmp->tail = NULL;
 	return tmp;
@@ -124,20 +126,24 @@ Node* getNth(DblLinkedList *list, size_t index) {
 }
 
 // печать списка
-void printDblLinkedList(DblLinkedList *list, void(*fun)(void*)) {
-	Node *tmp = list->head;
+void printDblLinkedList(DblLinkedList *list) {
+	Node *tmp;
+	tmp = list->head;
+	int i = 0;
 	while (tmp) {
-		fun(tmp->value);
+		if (tmp->value != NULL) {
+			printf("%s \n", (char *)tmp->value);
+		}
 		tmp = tmp->next;
+		i++;
 	}
 	printf("\n");
 }
 
-void printInt(void *value) {
-	printf("%d ", *((int*)value));
+int checkMemory(void *buffer){
+	if (buffer == NULL) {
+		printf("Memory allocation error \n");
+		return 0;
+	}
+	else return 1;
 }
-
-void printString(void *value) {
-	printf("%s \n", (char*)value);
-}
-

@@ -3,89 +3,77 @@
 #include <string.h>
 #include "ilist.h"
 
-#define BSS 1000 // маскимальная длина строки программы
-#define BSC 100 // максимальная длина команды 
-
-int load_prog(char *, DblLinkedList * ); 
-int load_var(char *, DblLinkedList * );
+int load_prog(FILE *, DblLinkedList * ); 
+int load_var(FILE *, DblLinkedList * );
 
 // разбиваем программу через ; так чтобы было через \n в list_prog 
-int load_prog(char *progName, DblLinkedList * list_prog) {
-
-	FILE *file_prog;
-	file_prog = fopen(progName, "r");
-	if (file_prog != NULL) {
+int load_prog(FILE *file_prog, DblLinkedList * list_prog) {
 		int i = 0;
-		char *buffer5;
-		char *buffer1;
-		char *buffer2;
-		char *buffer3;
-		char *buffer4;
+		char *buffer1; // строка до ;
+		char *buffer2; // LOOPx хранится в буфере
+		char *buffer3; // DO
+		char *buffer4; // остаток строки -> в первый и опять укорачивание 
 		char *buf;
 		char ch;
 		char *yk;
 
-		buffer1 = (char *)malloc(BSS * sizeof(char));
-		buffer2 = (char *)malloc(BSC * sizeof(char));
-		buffer3 = (char *)malloc(BSC * sizeof(char));
-		buffer4 = (char *)malloc(BSS * sizeof(char));
-		buffer5 = (char *)malloc(BSC * sizeof(char));
+		buffer1 = (char *)malloc(1 * sizeof(char)); 
+		buffer2 = (char *)malloc(1 * sizeof(char)); 
+		buffer3 = (char *)malloc(3 * sizeof(char));
+		buffer4 = (char *)malloc(1 * sizeof(char));
 
-		int lencount = 0;
+		//int lencount = 0;
 
 		while ((ch = fgetc(file_prog)) != EOF) {
 			if (!(ch == ' ' || ch == '\n' || ch == '\t')) {
 				if (ch == ';') {
+					buffer1 = realloc(buffer1, sizeof(char) * (i + 1));
+					if (!checkMemory(buffer1)) return 0;
 					buffer1[i] = '\0'; // строка кончилась 
 					int ex = 1;
 					// несколько LOOP DO подряд
 					while (ex) {
 						yk = strstr(buffer1, "DO");
 						if (yk == NULL) {
-							if (strlen(buffer1) <= BSC) {
-								strcpy(buffer5, buffer1);
-								pushBack(list_prog, (char *)buffer5);
-								buffer5 = (char *)malloc(BSC * sizeof(char));
-							}
-							else {
-								lencount ++;
-								printf("Command is too long- %s\n", buffer1);
-							}
+							pushBack(list_prog, (char *)buffer1);
+							buffer1 = (char *)malloc(1 * sizeof(char));
 							ex = 0;
 						}
 						else {
+							buffer2 = realloc(buffer2, sizeof(char) * (yk - buffer1 + 1));
+							if (buffer2 == NULL) {
+								printf("Memory allocation error \n");
+								return 0;
+							}
 							strncpy(buffer2, buffer1, yk - buffer1);
 							buffer2[yk - buffer1] = '\0';
-							if (strlen(buffer2) <= BSC) {
-								strcpy(buffer5, buffer2);
-								pushBack(list_prog, (char *)buffer5);
-								buffer5 = (char *)malloc(BSS * sizeof(char));
-							}
-							else {
-								lencount++;
-								printf("Command is too long - %s\n", buffer2);
-							}
-
+							pushBack(list_prog, (char *)buffer2);
+							buffer2 = (char *)malloc(1 * sizeof(char));
+							
 							strcpy(buffer3, "DO\0");
 							pushBack(list_prog, (char *)buffer3);
-							buffer3 = (char *)malloc(BSS * sizeof(char));
+							buffer3 = (char *)malloc(3 * sizeof(char));
 
+							buffer4 = realloc(buffer4, sizeof(char) * (strlen(yk + 2) + 1));
+							if (buffer4 == NULL) {
+								printf("Memory allocation error \n");
+								return 0;
+							}
 							strcpy(buffer4, yk + 2);
 							buf = strstr(buffer4, "DO");
 							if (buf == NULL) {
-								if (strlen(buffer4) <= BSC) {
-									strcpy(buffer5, buffer4);
-									pushBack(list_prog, (char *)buffer5);
-									buffer5 = (char *)malloc(BSS * sizeof(char));
-								}
-								else {
-									lencount++;
-									printf("Command is too long - %s\n", buffer4);
-								}
+								pushBack(list_prog, (char *)buffer4);
+								buffer4 = (char *)malloc(1 * sizeof(char));
 								ex = 0;
 							}
-							else
+							else {
+								buffer1 = realloc(buffer1, sizeof(char) *(strlen(buffer4) + 1));
+								if (buffer1 == NULL) {
+									printf("Memory allocation error \n");
+									return 0;
+								}
 								strcpy(buffer1, buffer4);
+							}
 						}
 					}
 					i = 0;
@@ -93,100 +81,80 @@ int load_prog(char *progName, DblLinkedList * list_prog) {
 				else {
 					buffer1[i] = ch;
 					i++;
+					buffer1 = realloc(buffer1, sizeof(char) * (i + 1));
+					if (buffer1 == NULL) {
+						printf("Memory allocation error \n");
+						return 0;
+					}
 				}
-				if (i > BSS - 1)
-					break;
 			}
 		}
+		int exit = 1;
 		buffer1[i] = '\0';
-		if (i > BSS - 1) {
-			printf("String is too long - %s\n", buffer1);
-			system("pause");
-			return 0;
-		}
-		if (lencount != 0) {
-			printf("%d Command is too long\n", lencount);
-			system("pause");
-			return 0;
-		}
-
-		fclose(file_prog);
-		system("cls");
+		free(buffer1);
+		free(buffer4);
+		buffer1 = NULL;
+		buffer4 = NULL;
+		buffer2 = NULL;
+		buffer3 = NULL;
+		
+		//system("cls");
 		// печатаем список команд 
-		printDblLinkedList(list_prog, printString);
-		system("pause");
-		return 1;
-	}
-
-	else
-		printf("File %s is not found \n", progName);
-	
-	system("pause");
-	return 0;
+		if (exit)
+			printDblLinkedList(list_prog);
+		//system("pause");
+		printf("Enter a key to continue...\n");
+		getchar();
+		return exit;
+	//system("pause");
+	printf("Enter a key to continue...\n");
+	getchar();
+	return 1;
 }
 // разбиваем программу через ; и , так чтобы было \n в list_var
-int load_var(char *varName, DblLinkedList * list_var) {
-
-	FILE *file_var;
-	file_var = fopen(varName, "r");
-	if (file_var != NULL) {
+int load_var(FILE *file_var, DblLinkedList * list_var) {
+	//FILE *file_var;
+	//file_var = fopen(varName, "r");
 		int i = 0;
 		char *buffer1;
-		int lencount = 0;
+		//int lencount = 0;
 		char ch;
-		buffer1 = (char *)malloc(BSC * sizeof(char));
+		buffer1 = (char *)malloc(1 * sizeof(char));
 		while ((ch = fgetc(file_var)) != EOF) {
 			if (!(ch == ' ' || ch == '\n' || ch == '\t')) {
 				if (ch == ';' || ch == ',') {
+					buffer1 = realloc(buffer1, sizeof(char) * (i + 1));
+					if (buffer1 == NULL) {
+						printf("Memory allocation error \n");
+						return 0;
+					}
 					buffer1[i] = '\0';
-					if (strlen(buffer1) <= BSC) {
-						pushBack(list_var, (char *)buffer1);
-						buffer1 = (char *)malloc(BSC * sizeof(char));
-					}
-					else {
-						printf("Command is too long - %s\n", buffer1);
-						lencount++;
-					}
+					pushBack(list_var, (char *)buffer1);
+					buffer1 = (char *)malloc(1 * sizeof(char));
 					i = 0;
 				}
 				else {
 					buffer1[i] = ch;
 					i++;
+					buffer1 = realloc(buffer1, sizeof(char) *(i + 1));
+					if (buffer1 == NULL) {
+						printf("Memory allocation error \n");
+						return 0;
+					}
 				}
-				if (i > BSS - 1)
-					break;
 			}
 		}
 		buffer1[i] = '\0';
-		if (strlen(buffer1) <= BSC) {
-			pushBack(list_var, (char *)buffer1);
-		}
-		else {
-			printf("Command is too long - %s\n", buffer1);
-			lencount++;
-		}
 
-		if (i > BSS - 1) {
-			printf("String is too long - %s\n", buffer1);
-			system("pause");
-			return 0;
-		}
-		if (lencount != 0) {
-			printf("%d Command is too long\n", lencount);
-			system("pause");
-			return 0;
-		}
-
-
-		fclose(file_var);
-		system("cls");
+		//system("cls");
 		// печатаем список переменных 
-		printDblLinkedList(list_var, printString);
-		system("pause");
+		printDblLinkedList(list_var);
+		//system("pause");
+		printf("Enter a key to continue...\n");
+		getchar();
 		return 1;
-	}
-	else
-		printf("File %s is not found\n", varName);
-	system("pause");
-	return 0;
+	//system("pause");
+	printf("Enter a key to continue...\n");
+	getchar();
+	return 1;
 }

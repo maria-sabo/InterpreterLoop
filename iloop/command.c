@@ -4,14 +4,14 @@
 #define BSE 100 // максимальная длина сообщения об ошибке
 
 
+
 void doProg(FILE *f, DblLinkedList * list_command, DblLinkedList * list_init, int comlimit) {
 
 	DblLinkedList * list_varvalue = createDblLinkedList();
-	DblLinkedList * list_loop = createDblLinkedList();
+	DblLinkedList * list_loop = createDblLinkedList(); 
 
 	Node *tmp = list_init->head; // встаем в начало списка команд для инициализации переменных
 	int ok = 1;
-	system("cls");
 	while (tmp && ok) {
 		ok = doCommand((Command *)tmp->value, list_loop, list_varvalue, &tmp); // выполняем поочереди команды инициализации переменных
 		printCommand(tmp->value, f); // печать команды
@@ -48,59 +48,52 @@ void doProg(FILE *f, DblLinkedList * list_command, DblLinkedList * list_init, in
 	
 	if (findvar(0, list_varvalue)) {
 		printf("x0 = %d\n", getvar(0, list_varvalue));
-		fprintf(f, "x0 = %d\n", getvar(0, list_varvalue));
+		if (f != NULL) fprintf(f, "x0 = %d\n", getvar(0, list_varvalue));
 	}
 	else {
 		printf("x0 is not initialised\n");
-		fprintf(f,"x0 is not initialised\n");
+		if (f != NULL) fprintf(f,"x0 is not initialised\n");
 	}
 
 	VarEl *buf1;                       // удаляем, освобождая память
 	buf1 = (VarEl *) popFront(list_varvalue);
 	while (buf1 != NULL) {
-		buf1 = (VarEl *) popFront(list_varvalue);
 		free(buf1);
+		buf1 = (VarEl *) popFront(list_varvalue);
 	}
 	deleteDblLinkedList(&list_varvalue);
 	LoopEl *buf2;
 	buf2 = (LoopEl *) popFront(list_loop);
 	while (buf2 != NULL) {
-		buf2 = (LoopEl *) popFront(list_loop);
 		free(buf2);
+		buf2 = (LoopEl *)popFront(list_loop);
 	}
 	deleteDblLinkedList(&list_loop);
-
-
 }
 
-int doCommand(void * value, DblLinkedList * list_loop, DblLinkedList * list_varvalue, Node** tp) {
-	Command * com;
-	com = (Command *)value;
+int doCommand(Command * com, DblLinkedList * list_loop, DblLinkedList * list_varvalue, Node** tp) {
 	if (!checkloop(list_loop) && com->command != 2) // выход, если последний loop нулевой и не END
 		return -1;
 	int ok = 1;
 	int val;
-	// DO
-	if (com->command == 1) {
-	}
-	// END
-	if (com->command == 2) {
+	switch (com->command) {
+	case 1: // DO 
+		break;
+	case 2: // END
 		*tp = getloop(list_loop, tp);
-	}
-	// LOOPx
-	if (com->command == 3) {
-		if (!findvar(com->p2, list_varvalue)) {
+		break;
+	case 3: // LOOPx
+		if (!findvar(com->p1, list_varvalue)) {
 			com->error = 22;
 			ok = 0;
 		}
-		else 
+		else
 			if (!putloop(com->p1, *tp, list_loop, list_varvalue)) {
 				com->error = 21;
 				ok = 0;
 			}
-	}
-	// :=+
-	if (com->command == 4) {
+		break;
+	case 4: // :=+
 		if (!findvar(com->p2, list_varvalue)) {
 			com->error = 22;
 			ok = 0;
@@ -109,9 +102,8 @@ int doCommand(void * value, DblLinkedList * list_loop, DblLinkedList * list_varv
 			val = getvar(com->p2, list_varvalue);
 			putvar(com->p1, val + com->p3, list_varvalue);
 		}
-	}
-	// :=-
-	if (com->command == 5) {
+		break;
+	case 5: // :=-
 		if (!findvar(com->p2, list_varvalue)) {
 			com->error = 22;
 			ok = 0;
@@ -120,10 +112,11 @@ int doCommand(void * value, DblLinkedList * list_loop, DblLinkedList * list_varv
 			val = getvar(com->p2, list_varvalue);
 			putvar(com->p1, val - com->p3, list_varvalue);
 		}
-	}
-	// =
-	if (com->command == 6) {
+		break;
+	case 6: // = 
 		putvar(com->p1, com->p2, list_varvalue);
+		break;
+
 	}
 	return ok;
 }
@@ -133,27 +126,68 @@ int doCommand(void * value, DblLinkedList * list_loop, DblLinkedList * list_varv
 	Command * com;
 	com = (Command *)value;
 	strcpy(er, "\0");
-	if (com->error == 0) strcpy(er, "\0");
-	if (com->error == 1) strcpy(er, "  Garbage characters in the use of DO");
-	if (com->error == 2) strcpy(er, "  Garbage characters in the use of END");
-	if (com->error == 3) strcpy(er, "  Garbage characters in the use of LOOP-X");
-	if (com->error == 4) strcpy(er, "  Garbage characters in the index of LOOP x");
-	if (com->error == 5) strcpy(er, "  Garbage characters in the left part of +-");
-	if (com->error == 6) strcpy(er, "  Garbage characters in the left part of := ");
-	if (com->error == 7) strcpy(er, "  Garbage characters in the index of left part");
-	if (com->error == 8) strcpy(er, "  Plus or minus are not found");
-	if (com->error == 9) strcpy(er, "  There is unrecognised command");
-	if (com->error == 10) strcpy(er, "  Garbage characters in the use of х");
-	if (com->error == 11) strcpy(er, "  Garbage characters in the index of x");
-	if (com->error == 12) strcpy(er, "  Garbage characters in the right part of = ");
-	if (com->error == 13) strcpy(er, "  There is unrecognised command");
-	if (com->error == 14) strcpy(er, "  Count of DO greater than LOOP");
-	if (com->error == 15) strcpy(er, "  Count of END greater than LOOP or DO");
-	if (com->error == 21) strcpy(er, "  The x is not available");
-	if (com->error == 22) strcpy(er, "  The x is not initialised");
-	if (com->error == 23) strcpy(er, "  Garbage characters in the right part of +- \0");
-	if (com->error == 24) strcpy(er, "  Limit of index is exceeded \0");
-
+	switch (com->error) {
+	case 0:
+		strcpy(er, "\0");
+		break;
+	case 1:
+		strcpy(er, "  er: 1 Garbage characters in the use of DO");
+		break;
+	case 2:
+		strcpy(er, "  er: 2 Garbage characters in the use of END");
+		break;
+	case 3:
+		strcpy(er, "  er: 3 Garbage characters in the use of LOOP-X");
+		break;
+	case 4:
+		strcpy(er, "  er: 4 Garbage characters in the index of LOOP x");
+		break;
+	case 5:
+		strcpy(er, "  er: 5 Garbage characters in the left part of +-");
+		break;
+	case 6:
+		strcpy(er, "  er: 6 Garbage characters in the left part of := ");
+		break;
+	case 7:
+		strcpy(er, "  er: 7 Garbage characters in the index of left part");
+		break;
+	case 8:
+		strcpy(er, "  er: 8 Plus or minus are not found");
+		break;
+	case 9:
+		strcpy(er, "  er: 9 There is unrecognised command");
+		break;
+	case 10:
+		strcpy(er, "  er: 10 Garbage characters in the use of х");
+		break;
+	case 11:
+		strcpy(er, "  er: 11 Garbage characters in the index of x");
+		break;
+	case 12:
+		strcpy(er, "  er: 12 Garbage characters in the right part of = ");
+		break;
+	case 13:
+		strcpy(er, "  er: 13 There is unrecognised command");
+		break;
+	case 14:
+		strcpy(er, "  er: 14 Count of DO greater than LOOP");
+		break;
+	case 15:
+		strcpy(er, "  er: 15 Count of END greater than LOOP or DO");
+		break;
+	case 21:
+		strcpy(er, "  er: 21 The x is not available");
+		break;
+	case 22:
+		strcpy(er, "  er: 22 The x is not initialised");
+		break;
+	case 23:
+		strcpy(er, "  er: 23 Garbage characters in the right part of +- \0");
+		break;
+	case 24:
+		strcpy(er, "  er: 24 Limit of index is exceeded \0");
+		break;
+	}
 	printf("%3d  %s %s  \n", com->ns, com->buffer, er);
 	if (f != NULL)
 		fprintf(f, "%3d  %s %s  \n", com->ns, com->buffer, er);
@@ -162,13 +196,15 @@ int doCommand(void * value, DblLinkedList * list_loop, DblLinkedList * list_varv
 
 Command * createCommand(int i, char *b, int c, int e, size_t p1, size_t p2, size_t p3) {
 	Command * com = (Command *)malloc(sizeof(Command));
-	com->ns = i;
-	com->buffer = b;
-	com->error = e;
-	com->command = c;
-	com->p1 = p1;
-	com->p2 = p2;
-	com->p3 = p3;
+	if (com != NULL) {
+		com->ns = i;
+		com->buffer = b;
+		com->error = e;
+		com->command = c;
+		com->p1 = p1;
+		com->p2 = p2;
+		com->p3 = p3;
+	}
 	return com;
 }
 
@@ -179,14 +215,14 @@ Node * getloop(DblLinkedList * list_loop, Node ** tp) {
 		Node *yk = le->yk;
 		if (le->count < 1) {
 			free(le);
-			return *tp;
+			return *tp; // указатель на текущий узел 
 		}
 		else
 			pushBack(list_loop, le);
-		return yk;
+		return yk; // указатель на узел, с которого надо повторять 
 	}
 	else
-		return *tp;
+		return *tp; // указатель на текущий узел
 }
 
 int checkloop(DblLinkedList * list_loop) {
@@ -260,8 +296,10 @@ int findvar(int p1, DblLinkedList * list_varvalue) {
 
 LoopEl * createLoopEl(int i, Node * tmp) {
 	LoopEl *le = (LoopEl *)malloc(sizeof(LoopEl));
-	le->count = i;
-	le->yk = tmp;
+	if (le != NULL) {
+		le->count = i;
+		le->yk = tmp;
+	}
 	return le;
 }
 
@@ -307,8 +345,10 @@ void printCommandList (DblLinkedList * list, FILE * f) {
 } 
 VarEl * createVarEl(int index, int value) {
 	VarEl *ve = (VarEl *)malloc(sizeof(VarEl));
-	ve->index = index;
-	ve->value = value;
+	if (ve != NULL) {
+		ve->index = index;
+		ve->value = value;
+	}
 	return ve;
 }
 

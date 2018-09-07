@@ -26,7 +26,7 @@ int checkSyntax(FILE* file_out, DblLinkedList * list_prog, DblLinkedList * list_
 		buf = popFront(list_prog);
 	}
 
-	system("cls");
+	//system("cls");
 	printCommandList(list_command, file_out);
 
 	printf("Programm: %d syntax error found\n", okp);
@@ -39,7 +39,9 @@ int checkSyntax(FILE* file_out, DblLinkedList * list_prog, DblLinkedList * list_
 			fprintf(file_out, "Programm: %d LOOP - %d DO - %d END error found\n", k_loop, k_do, k_end);
 	}
 
-	system("pause");
+	//system("pause");
+	printf("Enter a key to continue...\n");
+	getchar();
 
 	// проверка синтаксиса переменных
 	ns = 0;
@@ -50,12 +52,14 @@ int checkSyntax(FILE* file_out, DblLinkedList * list_prog, DblLinkedList * list_
 		okv = okv + checkvline((char *)buf, ns, list_init);
 		buf = popFront(list_var);
 	}
-	system("cls");
+	//system("cls");
 	printCommandList(list_init, file_out);
 	printf("Variable: %d syntax error found\n", okv);
 	if (file_out != NULL)
 		fprintf(file_out, "Variable: %d syntax error found\n", okv);
-	system("pause");
+	//system("pause");
+	printf("Enter a key to continue...\n");
+	getchar();
 
 	if (okp + okv == 0)
 		return 1;
