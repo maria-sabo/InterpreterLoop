@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "ilist.h"
 #include "command.h"
-#define BSE 100 // максимальная длина сообщения об ошибке
-
-
 
 void doProg(FILE *f, DblLinkedList * list_command, DblLinkedList * list_init, int comlimit) {
 
@@ -122,76 +119,76 @@ int doCommand(Command * com, DblLinkedList * list_loop, DblLinkedList * list_var
 }
 // печать команды в соответствии с разбором ошибок
  void printCommand(void * value, FILE *f) {
-	char * er = (char *)malloc(BSE * sizeof(char));
+	 char * er = "";
 	Command * com;
 	com = (Command *)value;
-	strcpy(er, "\0");
+	er = "\0";
 	switch (com->error) {
 	case 0:
-		strcpy(er, "\0");
+		er = "\0";
 		break;
 	case 1:
-		strcpy(er, "  er: 1 Garbage characters in the use of DO");
+		er = " er: 1 Garbage characters in the use of DO";
 		break;
 	case 2:
-		strcpy(er, "  er: 2 Garbage characters in the use of END");
+		er = " er: 2 Garbage characters in the use of END";
 		break;
 	case 3:
-		strcpy(er, "  er: 3 Garbage characters in the use of LOOP-X");
+		er = " er: 3 Garbage characters in the use of LOOP-X";
 		break;
 	case 4:
-		strcpy(er, "  er: 4 Garbage characters in the index of LOOP x");
+		er = " er: 4 Garbage characters in the index of LOOP x";
 		break;
 	case 5:
-		strcpy(er, "  er: 5 Garbage characters in the left part of +-");
+		er = "  er: 5 Garbage characters in the left part of +-";
 		break;
 	case 6:
-		strcpy(er, "  er: 6 Garbage characters in the left part of := ");
+		er = "  er: 6 Garbage characters in the left part of := ";
 		break;
 	case 7:
-		strcpy(er, "  er: 7 Garbage characters in the index of left part");
+		er = "  er: 7 Garbage characters in the index of left part";
 		break;
 	case 8:
-		strcpy(er, "  er: 8 Plus or minus are not found");
+		er = "  er: 8 Plus or minus are not found";
 		break;
 	case 9:
-		strcpy(er, "  er: 9 There is unrecognised command");
+		er = "  er: 9 There is unrecognised command";
 		break;
 	case 10:
-		strcpy(er, "  er: 10 Garbage characters in the use of х");
+		er = "  er: 10 Garbage characters in the use of х";
 		break;
 	case 11:
-		strcpy(er, "  er: 11 Garbage characters in the index of x");
+		er = "  er: 11 Garbage characters in the index of x";
 		break;
 	case 12:
-		strcpy(er, "  er: 12 Garbage characters in the right part of = ");
+		er = "  er: 12 Garbage characters in the right part of = ";
 		break;
 	case 13:
-		strcpy(er, "  er: 13 There is unrecognised command");
+		er = "  er: 13 There is unrecognised command";
 		break;
 	case 14:
-		strcpy(er, "  er: 14 Count of DO greater than LOOP");
+		er = "  er: 14 Count of DO greater than LOOP";
 		break;
 	case 15:
-		strcpy(er, "  er: 15 Count of END greater than LOOP or DO");
+		er = "  er: 15 Count of END greater than LOOP or DO";
 		break;
 	case 21:
-		strcpy(er, "  er: 21 The x is not available");
+		er = "  er: 21 The x is not available";
 		break;
 	case 22:
-		strcpy(er, "  er: 22 The x is not initialised");
+		er = "  er: 22 The x is not initialised";
 		break;
 	case 23:
-		strcpy(er, "  er: 23 Garbage characters in the right part of +- \0");
+		er = "  er: 23 Garbage characters in the right part of +- \0";
 		break;
 	case 24:
-		strcpy(er, "  er: 24 Limit of index is exceeded \0");
+		er = "  er: 24 Limit of index is exceeded \0";
 		break;
 	}
 	printf("%3d  %s %s  \n", com->ns, com->buffer, er);
 	if (f != NULL)
 		fprintf(f, "%3d  %s %s  \n", com->ns, com->buffer, er);
-	free(er);
+	
 } 
 
 Command * createCommand(int i, char *b, int c, int e, size_t p1, size_t p2, size_t p3) {
