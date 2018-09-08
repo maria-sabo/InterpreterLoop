@@ -1,0 +1,12 @@
+x1 := x0 + 0;
+x2 := x1 + 1;
+x3 := x1 + 1;
+LOOP x3
+DO
+	x3 := x0 - 6;
+	LOOP x2
+	DO
+		x0 := x1 + 1000;
+	END;
+END;
+

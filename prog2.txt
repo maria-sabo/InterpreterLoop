@@ -1,0 +1,18 @@
+x12345:=x2+3;  
+x2:=x12346-7;  
+x2:=x1-7ss;  
+x3:=xx2+3;   
+  
+asLOOP x1   
+DOss   
+	LOOP x1234566
+	DO 
+		x SCcss0:=x0+1;   
+	END;   
+	cc zxx 4:=x2-a8;     
+	x4:=x2-a8;     
+
+END;   END;   END;   END;   
+qwEND;   
+
+

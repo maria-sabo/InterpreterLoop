@@ -1,0 +1,17 @@
+ssdzszaxx1:=x2+3;  
+x2:=x1-aa7;  
+x2:=x1-7ss;  
+x3:=xx2+3;   
+  
+LOOP x1   
+DO   
+	LOOP x1234566
+	DO 
+		x SCcss0:=x0+1;   
+	END;   
+	cc zxx 4:=x2-a8;     
+	x4:=x2-a8;     
+END;   
+END;   
+
+
