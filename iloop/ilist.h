@@ -1,8 +1,9 @@
-#include <stdio.h>
-#include <malloc.h>
 #pragma once
 #ifndef ILIST_H
 #define ILIST_H
+#include <stdio.h>
+#include <malloc.h>
+
 // узел
 typedef struct _Node {
 	void *value;

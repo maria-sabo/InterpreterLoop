@@ -1,10 +1,10 @@
-﻿#include <stdio.h>
+﻿#pragma once
+#ifndef COMMAND_H
+#define COMMAND_H
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
-#pragma once
-#ifndef COMMAND_H
-#define COMMAND_H
 
 typedef struct _Command {
 	int ns; // номер строки 
@@ -27,7 +27,6 @@ typedef struct _VarEl {
 	int value;
 } VarEl;
 
-// #endif COMMAND_H
 
 Command * createCommand(int, char *, int, int, size_t, size_t, size_t);
 void printCommand(void *, FILE *);
@@ -43,5 +42,6 @@ int getvar(int p1, DblLinkedList *);
 int findvar(int p1, DblLinkedList *);
 VarEl * createVarEl(int, int);
 int checkloop(DblLinkedList *);
+
 #endif COMMAND_H
 

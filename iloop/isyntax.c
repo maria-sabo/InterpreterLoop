@@ -2,8 +2,6 @@
 #include "ilist.h"
 #include "command.h"
 
-#define INDLIMIT 2147483646 // определяем так максимальный индекс переменной 
-
 int checkpline(char*, int, DblLinkedList *, int*, int*, int*);
 int checkvline(char*, int, DblLinkedList *);
 
@@ -11,13 +9,13 @@ int checkSyntax(FILE* file_out, DblLinkedList * list_prog, DblLinkedList * list_
 	DblLinkedList * list_command, DblLinkedList * list_init) {
 
 	// проверка синтаксиcа программы
-	int k_end, k_do, k_loop;
+	int k_end, k_do, k_loop; // количество end, do, loop в программе
 	k_end = 0;
 	k_do = 0;
 	k_loop = 0;
 
-	int okp = 0;
-	int ns = 0;
+	int okp = 0; // как пройдена проверка строки программы
+	int ns = 0; // номер строки 
 	void *buf;
 	buf = popFront(list_prog);
 	while (buf != NULL) {
@@ -26,7 +24,6 @@ int checkSyntax(FILE* file_out, DblLinkedList * list_prog, DblLinkedList * list_
 		buf = popFront(list_prog);
 	}
 
-	//system("cls");
 	printCommandList(list_command, file_out);
 
 	printf("Programm: %d syntax error found\n", okp);
@@ -39,25 +36,22 @@ int checkSyntax(FILE* file_out, DblLinkedList * list_prog, DblLinkedList * list_
 			fprintf(file_out, "Programm: %d LOOP - %d DO - %d END error found\n", k_loop, k_do, k_end);
 	}
 
-	//system("pause");
 	printf("Enter a key to continue...\n");
 	getchar();
 
 	// проверка синтаксиса переменных
 	ns = 0;
-	int okv = 0;
+	int okv = 0; // как пройдена проверка строки переменных
 	buf = popFront(list_var);
 	while (buf != NULL) {
 		ns++;
 		okv = okv + checkvline((char *)buf, ns, list_init);
 		buf = popFront(list_var);
 	}
-	//system("cls");
 	printCommandList(list_init, file_out);
 	printf("Variable: %d syntax error found\n", okv);
 	if (file_out != NULL)
 		fprintf(file_out, "Variable: %d syntax error found\n", okv);
-	//system("pause");
 	printf("Enter a key to continue...\n");
 	getchar();
 
@@ -71,11 +65,13 @@ int checkSyntax(FILE* file_out, DblLinkedList * list_prog, DblLinkedList * list_
 // проверка строки программы
 int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int * c_do, int * c_end) {
 	char * yk;
-	//char * e;
 	Command * com;
-	//extern int k_do, k_end, k_loop;
 
-	int co, er, p1 = 0, p2 = 0, p3 = 0;
+	int co, er, p1 = 0, p2 = 0, p3 = 0; // сo - номер команды: 1 - DO, 2 - END, 3 - LOOPx, 4 - :=, 5 - :=+, 6 - :=-
+	                                    // er - номер ошибки
+										// p1 - индекс переменной слева или переменной в LOOP
+										// p2 - индекс переменной справа или константа 
+										// p3 - константа
 	int ok1 = -1;
 	int ok2 = -1;
 	int ok3 = -1;
@@ -84,7 +80,7 @@ int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int 
 	yk = strstr(b, "DO"); // DO входит в строку
 	if (yk != NULL) {
 		*c_do = *c_do + 1;
-		if (strlen(b) == 2) {
+		if (strlen(b) == 2) { // 2 - длина DO
 			if (*c_do > *c_loop) { 
 				co = 1; er = 14; // количество DO некорректное
 				ok1 = 1;
@@ -104,7 +100,7 @@ int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int 
 		yk = strstr(b, "END"); // END входит в строку
 		if (yk != NULL) {
 			*c_end = *c_end + 1;
-			if (strlen(b) == 3) {
+			if (strlen(b) == 3) { // 3 - длина END
 				if (*c_end > *c_loop || *c_end > *c_do) { 
 					co = 2; er = 15; // количество END некорректное
 					ok2 = 0;
@@ -124,7 +120,7 @@ int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int 
 			yk = strstr(b, "LOOPx"); // LOOPx в строке 
 			if (yk != NULL) {
 				*c_loop = * c_loop + 1;
-				if (yk - b != 0 || strlen(b) == 5) {
+				if (yk - b != 0 || strlen(b) == 5) { // 5 - длина LOOPx
 					co = 3;	er = 3; // перед LOOPx неккоректная запись
 					ok3 = 0;
 				}
@@ -140,7 +136,7 @@ int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int 
 						}
 						else {
 							p1 = atoi(yk + 5); // в p1 будет храниться индекс х
-							if (p1 <= INDLIMIT && p1 >= 0) { 
+							if (p1 <= INT_MAX && p1 >= 0) {
 								co = 3;	er = 0; 
 								ok3 = 1;
 							}
@@ -159,9 +155,13 @@ int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int 
 				if (yk != NULL) {
 					int bsc = strlen(b);
 					char *left = malloc(bsc * sizeof(char)); // левая часть выражения xN:=xM+C, т.е xN
+					if (!checkMemory(left)) return 0;
 					char *right = malloc(bsc * sizeof(char)); // правая часть выражения xN:=xM+C, т.е xM+C
+					if (!checkMemory(right)) return 0;
 					char *rleft = malloc(bsc * sizeof(char)); // xM
+					if (!checkMemory(rleft)) return 0;
 					char *rright = malloc(bsc * sizeof(char)); // C
+					if (!checkMemory(rright)) return 0;
 					strncpy(left, b, yk - b);
 					left[yk - b] = '\0';
 					strcpy(right, yk + 2); 
@@ -183,7 +183,7 @@ int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int 
 						}
 						else {
 							p1 = atoi(left + 1); // в p1 будет храниться индекc х
-							if (p1 > INDLIMIT || p1 < 0) {
+							if (p1 > INT_MAX || p1 < 0) {
 								co = 4; er = 24;
 								ok4 = 0;
 							}
@@ -212,7 +212,7 @@ int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int 
 							}
 							else {
 								of = 1;
-								for (size_t i = 1; i < strlen(rleft); i++) //!!!
+								for (size_t i = 1; i < strlen(rleft); i++) 
 									if ((int)rleft[i] < 48 || (int)rleft[i] > 57) // после х не стоит число, состоящее из цифр (проверка по ASCII)
 										of = 0;
 								if (!of) {
@@ -221,7 +221,7 @@ int checkpline(char* b, int ns, DblLinkedList * list_command, int * c_loop, int 
 								}
 								else {
 									p2 = atoi(rleft + 1); // в p2 будет храниться индекс хM  
-									if (p2 > INDLIMIT || p2 < 0) {
+									if (p2 > INT_MAX || p2 < 0) {
 										co = 4; er = 24;
 										ok4 = 0;
 									}
@@ -277,16 +277,21 @@ int checkvline(char* b, int ns, DblLinkedList * list_init) {
 	Command * com;
 
 	yk = strstr(b, "=");
-	int co = 6;
-	int er = 0;
+	int co = 6; // команда, обозначающая, что это инициализация переменных
+				// p1 - индекс переменной слева или переменной в LOOP
+				// p2 - индекс переменной справа или константа 
+				// p3 - константа
+	int er = 0; // номер ошибки
 	int p1 = 0;
 	int p2 = 0;
 	int p3 = 0;
-	int of;
+	int of; // флаг
 	if (yk != NULL) {
 		int bsc = strlen(b);
 		char *left = malloc(bsc * sizeof(char));
+		if (!checkMemory(left)) return 0;
 		char *right = malloc(bsc * sizeof(char));
+		if (!checkMemory(right)) return 0;
 		strncpy(left, b, yk - b); // xN, где xN=C
 		left[yk - b] = '\0';
 		strcpy(right, yk + 1); // С, где xN=C
@@ -297,7 +302,7 @@ int checkvline(char* b, int ns, DblLinkedList * list_init) {
 		else {
 			of = 1;
 			for (size_t i = 1; i < strlen(left); i++) {
-				if ((int)left[i] < 48 || (int)left[i] > 57) { 
+				if ((int)left[i] < 48 || (int)left[i] > 57) { // после х не стоит число, состоящее из цифр (проверка по ASCII)
 					of = 0;
 				}
 			}
@@ -306,13 +311,13 @@ int checkvline(char* b, int ns, DblLinkedList * list_init) {
 			}
 			else {
 				p1 = atoi(left + 1); // в p1 будет храниться индекс х в левой части 
-				if (p1 > INDLIMIT || p1 < 0) {
+				if (p1 > INT_MAX || p1 < 0) {
 					co = 6; er = 24; // индекс превышен
 				}
 				else {
 					of = 1;
 					for (size_t i = 1; i < strlen(right); i++)
-						if ((int)right[i] < 48 || (int)right[i] > 57) //!!!
+						if ((int)right[i] < 48 || (int)right[i] > 57) // после х не стоит число, состоящее из цифр (проверка по ASCII)
 							of = 0;
 					if (!of) {
 						co = 6;	er = 12; // некорректная записать в правой части 
